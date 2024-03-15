@@ -12,9 +12,13 @@ const FormComponent = ({auth}) => {
     phone: '',
   });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  function handleChange(e) {
+    const { id, value, type } = e.target;
+     setFormData(prevValues => ({
+        ...prevValues,
+        [id]: val
+    }));
+}
 
   const handleSubmit = async (e) => {
     e.preventDefault();

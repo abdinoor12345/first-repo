@@ -366,5 +366,6 @@ public function offers_cart(Request $request, $id)
             'posts' => $posts
         ]);
     }
+    
 
 }

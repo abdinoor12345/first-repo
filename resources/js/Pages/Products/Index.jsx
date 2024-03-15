@@ -3,6 +3,7 @@ import AuthenticatedLayout2 from '@/Layouts/AuthenticatedLayout2';
 import { Inertia } from '@inertiajs/inertia';
  
 const Index = ({ products, auth, success }) => {
+    const [search, setSearch]=useState('');
     const [quantity, setQuantity] = useState(1);
     const [countdown, setCountdown] = useState([]);
 
@@ -32,13 +33,16 @@ const Index = ({ products, auth, success }) => {
             <div>
                 {success && <p>{success}</p>}
             </div>
+            
             <div className="container">
                 <h1 className="text-3xl font-bold mb-4 text-blue-900">Products in Stores</h1>
+                    <form className=' w-1/2' ><input className=' w-full mb-2' type="text" onChange={(e)=>setSearch(e.target.value)} placeholder="SEARCH PRODUCTS by name"/>
+  </form> 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    {products && products.map((product, index) => (
+                    {products && products.filter((product)=>{return search.toLowerCase()===''?product:product.name.toLowerCase().includes(search);}).map((product, index) => (
                         <div key={product.id} className="border border-gray-300 p-4 rounded-lg">
                             <img src={product.image_url} alt={product.name} className="card-image" />
-                            <div className="card-body">
+                            <div className="card-body"key={product.id}>
                                 <h2 className="card-title text-lg font-bold text-gray-900">{product.name}</h2>
                                 <p className="card-price text-green-600">Price: {product.price}</p>
                                 <p className="card-description text-gray-700">Description: {product.description}</p>

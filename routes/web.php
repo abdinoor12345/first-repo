@@ -112,5 +112,4 @@ Route::get('/terms_conditions', [ProductController::class, 'terms_conditions'])-
 
 Route::get('/usereducer', [ProductController::class, 'useReducer']);
  
-
 require __DIR__.'/auth.php';
