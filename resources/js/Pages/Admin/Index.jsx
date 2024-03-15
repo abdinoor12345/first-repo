@@ -3,6 +3,8 @@ import { Inertia } from '@inertiajs/inertia';
 import AuthenticatedLayout1 from '@/Layouts/AuthenticatedLayout1';
 
 const Index = ({ products, auth }) => {
+    const [search, setSearch]=useState('');
+
     const handleDelete = (productId) => {
         if (confirm('Are you sure you want to delete this product?')) {
             Inertia.delete(route('products.destroy', productId));
@@ -30,8 +32,10 @@ const Index = ({ products, auth }) => {
         >
             <div className="container">
                 <h1 className="text-3xl font-bold mb-4 text-blue-900">Products..in..Stores</h1>
+                <form className=' w-1/2' ><input className=' w-full mb-2' type="text" onChange={(e)=>setSearch(e.target.value)} placeholder="SEARCH PRODUCTS by name"/>
+  </form> 
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                    {products.map(product => (
+                    {products.filter((product)=>{return search.toLowerCase()===''?product:product.name.toLowerCase().includes(search);}).map(product => (
                         <div key={product.id} className="border border-gray-300 p-4 rounded-lg">
                             <img src={product.image_url} alt={product.name} className="card-image" />
                             <div className="card-body">
