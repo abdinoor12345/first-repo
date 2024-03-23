@@ -10,6 +10,8 @@ use Inertia\Inertia; // Make sure to import Inertia
  use App\Models\Cart;
  use App\Models\Order;
  use App\Models\Offer;
+ use App\Models\Update;
+
 
 
 class ProductController extends Controller
@@ -367,5 +369,32 @@ public function offers_cart(Request $request, $id)
         ]);
     }
     
+public function give_updates(Request $request)
+{$validatedData = $request->validate([
+    'name' => 'required|string|max:255',
+    'message' => 'required|string',
+    
 
+    'image' => 'nullable|image|max:2048', // Maximum file size of 2MB
+ ]);
+ $imagePath = null;
+$imageUrl = null;
+if ($request->hasFile('image')) {
+ $imagePath = $request->file('image')->store('public/LOGO');
+ $imageUrl = url(Storage::url($imagePath));}
+
+ $update= Update::create([
+    'name' => $validatedData['name'],
+    'message' => $validatedData['message'],
+    'image' => $imagePath,
+    'image_url' => $imageUrl, // Store the URL of the image in the database
+ ]);
+
+    // Return a JSON response with a success message and the created product
+    return response()->json(['message' => 'update given successfully', 'offer' => $update]);
+}
+public function updates(){
+    return inertia::render('Admin/Give_update');
+
+}
 }

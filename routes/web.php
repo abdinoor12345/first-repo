@@ -111,5 +111,8 @@ Route::get('/terms_conditions', [ProductController::class, 'terms_conditions'])-
 });
 
 Route::get('/usereducer', [ProductController::class, 'useReducer']);
+Route::get('/updates', [ProductController::class, 'updates']);
+Route::post('/give_updates', [ProductController::class, 'give_updates'])->name('give_updates');
+
  
 require __DIR__.'/auth.php';
