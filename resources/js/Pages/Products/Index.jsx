@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import AuthenticatedLayout2 from '@/Layouts/AuthenticatedLayout2';
 import { Inertia } from '@inertiajs/inertia';
- 
+
 const Index = ({ products, auth, success }) => {
-    const [search, setSearch]=useState('');
-    const [quantity, setQuantity] = useState(1);
-    const [countdown, setCountdown] = useState([]);
+    const [search, setSearch] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [productsPerPage] = useState(8);
 
     const handleView = (productId) => {
         window.location.href = `/products/${productId}`;
@@ -13,16 +13,19 @@ const Index = ({ products, auth, success }) => {
 
     const handleAddToCart = async (productId) => {
         try {
-            await Inertia.post(route('add_cart', { id: productId, quantity }));
+            await Inertia.post(route('add_cart', { id: productId, quantity: 1 }));
             alert('Product added to cart successfully');
         } catch (error) {
             alert('Failed to add product to cart');
         }
     };
 
-     
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
- 
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     return (
         <AuthenticatedLayout2
             user={auth.user}
@@ -36,10 +39,10 @@ const Index = ({ products, auth, success }) => {
             
             <div className="container">
                 <h1 className="text-3xl font-bold mb-4 text-blue-900">Products in Stores</h1>
-                    <form className=' w-1/2' ><input className=' w-full mb-2' type="text" onChange={(e)=>setSearch(e.target.value)} placeholder="SEARCH PRODUCTS by name"/>
-  </form> 
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    {products && products.filter((product)=>{return search.toLowerCase()===''?product:product.name.toLowerCase().includes(search);}).map((product, index) => (
+                <form className=' w-1/2' ><input className=' w-full mb-2' type="text" onChange={(e)=>setSearch(e.target.value)} placeholder="SEARCH PRODUCTS by name"/>
+                </form> 
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {currentProducts && currentProducts.filter((product)=>{return search.toLowerCase()===''?product:product.name.toLowerCase().includes(search);}).map((product, index) => (
                         <div key={product.id} className="border border-gray-300 p-4 rounded-lg">
                             <img src={product.image_url} alt={product.name} className="card-image" />
                             <div className="card-body"key={product.id}>
@@ -49,15 +52,18 @@ const Index = ({ products, auth, success }) => {
                                 <p className="card-categories text-purple-600">Categories: {product.categories}</p>
                                  
                                 <button onClick={() => handleView(product.id)} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">View Details</button>
-                                <div>
-                                    <input className="  rounded-md ml-0 px-0" type="number" value={quantity} min="1" onChange={(e) => setQuantity(e.target.value)} />
-                                    <button onClick={() => handleAddToCart(product.id)} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">Add to Cart</button>
+                                <button onClick={() => handleAddToCart(product.id)} className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">Add to Cart</button>
  
-                                </div>
                             </div>
                         </div>
                     ))}
                 </div>
+                {products.length > productsPerPage &&
+                    <div className="flex justify-center mt-4">
+                        <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-l" onClick={() => paginate(currentPage - 1)}>Previous</button>
+                        <button className="bg-blue-800 hover:bg-gray-300 text-white font-bold py-2 px-4 rounded-r mx-2" onClick={() => paginate(currentPage + 1)}>More</button>
+                    </div>
+                }
             </div>
         </AuthenticatedLayout2>
     );
